@@ -6,13 +6,13 @@ import (
 	"github.com/P3rCh1/subs-agregator/internal/config"
 )
 
-type APIServer struct {
+type ServerAPI struct {
 	Logger *slog.Logger
 	Config *config.Config
 }
 
-func NewAPIServer(logger *slog.Logger, config *config.Config) *APIServer {
-	return &APIServer{
+func NewServerAPI(logger *slog.Logger, config *config.Config) *ServerAPI {
+	return &ServerAPI{
 		Logger: logger,
 		Config: config,
 	}

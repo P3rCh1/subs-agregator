@@ -6,22 +6,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (*APIServer) Create(ctx *gin.Context) {
+func (s *ServerAPI) Create(ctx *gin.Context) {
 	ctx.String(http.StatusNotImplemented, "Not implemented\n")
 }
 
-func (*APIServer) Read(ctx *gin.Context) {
+func (s *ServerAPI) Read(ctx *gin.Context) {
 	ctx.String(http.StatusNotImplemented, "Not implemented\n")
 }
 
-func (*APIServer) Update(ctx *gin.Context) {
+func (s *ServerAPI) Update(ctx *gin.Context) {
 	ctx.String(http.StatusNotImplemented, "Not implemented\n")
 }
 
-func (*APIServer) Delete(ctx *gin.Context) {
+func (s *ServerAPI) Delete(ctx *gin.Context) {
 	ctx.String(http.StatusNotImplemented, "Not implemented\n")
 }
 
-func (*APIServer) List(ctx *gin.Context) {
+func (s *ServerAPI) List(ctx *gin.Context) {
 	ctx.String(http.StatusNotImplemented, "Not implemented\n")
 }

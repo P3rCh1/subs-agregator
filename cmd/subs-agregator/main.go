@@ -31,7 +31,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	subs := subs.NewAPIServer(logger, cfg)
+	subs := subs.NewServerAPI(logger, cfg)
 
 	router := gin.New()
 	router.Use(gin.Recovery())

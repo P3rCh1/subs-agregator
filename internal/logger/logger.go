@@ -32,8 +32,12 @@ func Setup(cfg *config.Logger) (*slog.Logger, error) {
 	switch cfg.Format {
 	case "json":
 		handler = slog.NewJSONHandler(os.Stdout, ops)
+
 	case "text":
 		handler = slog.NewTextHandler(os.Stdout, ops)
+
+	default:
+		return nil, ErrUnknownFormat
 	}
 
 	return slog.New(handler), nil
