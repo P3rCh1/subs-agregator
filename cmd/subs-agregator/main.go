@@ -17,13 +17,13 @@ func main() {
 
 	cfg, err := config.ParseFile(*cfgPath)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "config parse fail: %s", err)
+		fmt.Fprintf(os.Stderr, "config parse fail: %s\n", err)
 		os.Exit(1)
 	}
 
 	logger, err := logger.Setup(cfg.Logger)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "setup logger fail: %s", err)
+		fmt.Fprintf(os.Stderr, "setup logger fail: %s\n", err)
 		os.Exit(1)
 	}
 
@@ -38,5 +38,5 @@ func main() {
 	router.DELETE("/subs/:id", subs.Delete)
 	router.DELETE("/subs", subs.List)
 
-	router.Run(":8080")
+	router.Run(cfg.Server.Host + ":" + cfg.Server.Port)
 }

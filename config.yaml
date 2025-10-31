@@ -1,0 +1,7 @@
+logger:
+  level: info
+  format: text
+
+server:
+  host: localhost
+  port: 8080
