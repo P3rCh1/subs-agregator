@@ -1,5 +1,7 @@
 package config
 
+import "time"
+
 type Config struct {
 	Logger *Logger `yaml:"logger"`
 	Server *Server `yaml:"server"`
@@ -11,6 +13,7 @@ type Logger struct {
 }
 
 type Server struct {
-	Host string `yaml:"host"`
-	Port string `yaml:"port"`
+	Host            string        `yaml:"host"`
+	Port            string        `yaml:"port"`
+	ShutdownTimeout time.Duration `yaml:"shutdown_timeout"`
 }

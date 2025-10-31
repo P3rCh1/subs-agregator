@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"time"
 
 	"gopkg.in/yaml.v3"
 )
@@ -17,6 +18,7 @@ func Default() *Config {
 		Server: &Server{
 			Host: "localhost",
 			Port: "8080",
+			ShutdownTimeout: 30 * time.Second,
 		},
 	}
 }

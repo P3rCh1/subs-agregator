@@ -5,3 +5,4 @@ logger:
 server:
   host: localhost
   port: 8080
+  shutdown_timeout: 10s

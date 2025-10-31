@@ -1,9 +1,13 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
+	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/P3rCh1/subs-agregator/internal/config"
 	"github.com/P3rCh1/subs-agregator/internal/logger"
@@ -38,5 +42,40 @@ func main() {
 	router.DELETE("/subs/:id", subs.Delete)
 	router.DELETE("/subs", subs.List)
 
-	router.Run(cfg.Server.Host + ":" + cfg.Server.Port)
+	server := &http.Server{
+		Addr:    cfg.Server.Host + ":" + cfg.Server.Port,
+		Handler: router,
+	}
+
+	go func() {
+		err := server.ListenAndServe()
+		if err != nil && err != http.ErrServerClosed {
+			logger.Error(
+				"listen",
+				"error", err,
+			)
+
+			return
+		}
+	}()
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+
+	logger.Info("starting shutdown server")
+
+	ctx, cancel := context.WithTimeout(context.Background(), cfg.Server.ShutdownTimeout)
+	defer cancel()
+
+	if err := server.Shutdown(ctx); err != nil {
+		logger.Error(
+			"shutdown server",
+			"error", err,
+		)
+
+		return
+	}
+
+	logger.Info("server stopped gracefully")
 }
