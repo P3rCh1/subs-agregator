@@ -40,7 +40,7 @@ func main() {
 	router.GET("/subs/:id", subs.Read)
 	router.PUT("/subs/:id", subs.Update)
 	router.DELETE("/subs/:id", subs.Delete)
-	router.DELETE("/subs", subs.List)
+	router.GET("/subs", subs.List)
 
 	server := &http.Server{
 		Addr:    cfg.Server.Host + ":" + cfg.Server.Port,
