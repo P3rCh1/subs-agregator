@@ -10,25 +10,25 @@ import (
 	"github.com/labstack/echo"
 )
 
-func Validate(sub *models.Subscription) error {
+func ValidateSub(sub *models.Subscription) error {
 	if sub.Price < 0 {
-		return echo.NewHTTPError(http.StatusBadRequest, "negative price")
+		return ErrNegativePrice
 	}
 
 	if sub.StartDate.IsZero() {
-		return echo.NewHTTPError(http.StatusBadRequest, "start_date is required")
+		return ErrStartDateRequired
 	}
 
-	if sub.EndDate != nil && sub.EndDate.Compare(sub.StartDate) <= 0 {
-		return echo.NewHTTPError(http.StatusBadRequest, "end date should be after start date")
+	if !sub.EndDate.IsZero() && sub.EndDate.Time.Before(sub.StartDate.Time) {
+		return ErrCmpDates
 	}
 
 	if sub.UserID == uuid.Nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "user_id is required")
+		return ErrUserIDRequired
 	}
 
 	if sub.ServiceName == "" {
-		return echo.NewHTTPError(http.StatusBadRequest, "service_name is required")
+		return ErrServiceNameRequired
 	}
 
 	return nil
@@ -37,10 +37,10 @@ func Validate(sub *models.Subscription) error {
 func (s *ServerAPI) Create(ctx echo.Context) error {
 	var sub models.Subscription
 	if err := ctx.Bind(&sub); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid request format")
+		return ErrBadRequest
 	}
 
-	if err := Validate(&sub); err != nil {
+	if err := ValidateSub(&sub); err != nil {
 		return err
 	}
 
@@ -49,7 +49,7 @@ func (s *ServerAPI) Create(ctx echo.Context) error {
 			"database",
 			"error", err,
 		)
-		return echo.ErrInternalServerError
+		return ErrInternal
 	}
 
 	ctx.JSON(http.StatusCreated, &sub)
@@ -59,20 +59,20 @@ func (s *ServerAPI) Create(ctx echo.Context) error {
 func (s *ServerAPI) Read(ctx echo.Context) error {
 	id, err := uuid.Parse(ctx.Param("id"))
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid subscription id")
+		return ErrInvalidID
 	}
 
 	sub, err := s.DB.Read(ctx.Request().Context(), id)
 	if err != nil {
 		if errors.Is(err, postgres.ErrNotFound) {
-			return echo.NewHTTPError(http.StatusBadRequest, "subscription not found")
+			return ErrSubNotFound
 		}
 
 		s.Logger.Error(
 			"database",
 			"error", err,
 		)
-		return echo.ErrInternalServerError
+		return ErrInternal
 	}
 
 	ctx.JSON(http.StatusOK, sub)
@@ -82,12 +82,12 @@ func (s *ServerAPI) Read(ctx echo.Context) error {
 func (s *ServerAPI) Update(ctx echo.Context) error {
 	id, err := uuid.Parse(ctx.Param("id"))
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid subscription id")
+		return ErrInvalidID
 	}
 
 	var sub models.Subscription
 	if err := ctx.Bind(&sub); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid request format")
+		return ErrBadRequest
 	}
 
 	sub.ID = id
@@ -95,14 +95,14 @@ func (s *ServerAPI) Update(ctx echo.Context) error {
 	err = s.DB.Update(ctx.Request().Context(), &sub)
 	if err != nil {
 		if errors.Is(err, postgres.ErrNotFound) {
-			return echo.NewHTTPError(http.StatusBadRequest, "subscription not found")
+			return ErrSubNotFound
 		}
 
 		s.Logger.Error(
 			"database",
 			"error", err,
 		)
-		return echo.ErrInternalServerError
+		return ErrInternal
 	}
 
 	ctx.JSON(http.StatusOK, sub)
@@ -112,20 +112,20 @@ func (s *ServerAPI) Update(ctx echo.Context) error {
 func (s *ServerAPI) Delete(ctx echo.Context) error {
 	id, err := uuid.Parse(ctx.Param("id"))
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid subscription id")
+		return ErrInvalidID
 	}
 
 	err = s.DB.Delete(ctx.Request().Context(), id)
 	if err != nil {
 		if errors.Is(err, postgres.ErrNotFound) {
-			return echo.NewHTTPError(http.StatusBadRequest, "subscription not found")
+			return ErrSubNotFound
 		}
 
 		s.Logger.Error(
 			"database",
 			"error", err,
 		)
-		return echo.ErrInternalServerError
+		return ErrInternal
 	}
 
 	ctx.Response().WriteHeader(http.StatusOK)
@@ -135,7 +135,7 @@ func (s *ServerAPI) Delete(ctx echo.Context) error {
 func (s *ServerAPI) List(ctx echo.Context) error {
 	id, err := uuid.Parse(ctx.Param("id"))
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid user id")
+		return ErrInvalidID
 	}
 
 	subs, err := s.DB.List(ctx.Request().Context(), id)
@@ -144,7 +144,7 @@ func (s *ServerAPI) List(ctx echo.Context) error {
 			"database",
 			"error", err,
 		)
-		return echo.ErrInternalServerError
+		return ErrInternal
 	}
 
 	ctx.JSON(http.StatusOK, subs)

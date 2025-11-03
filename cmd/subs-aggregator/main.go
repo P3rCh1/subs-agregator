@@ -16,7 +16,6 @@ import (
 	mw "github.com/P3rCh1/subs-agregator/internal/server/middleware"
 	"github.com/P3rCh1/subs-agregator/internal/storage/postgres"
 	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
 )
 
 func main() {
@@ -91,7 +90,7 @@ func SetupServer(subs *subs.ServerAPI) *echo.Echo {
 	router.HideBanner = true
 	router.Logger.SetOutput(io.Discard)
 
-	router.Use(middleware.Recover())
+	router.Use(mw.Recover(subs.Logger))
 	router.Use(mw.Logger(subs.Logger))
 
 	router.POST("/subs", subs.Create)
@@ -99,6 +98,7 @@ func SetupServer(subs *subs.ServerAPI) *echo.Echo {
 	router.PUT("/subs/:id", subs.Update)
 	router.DELETE("/subs/:id", subs.Delete)
 	router.GET("/subs/list/:id", subs.List)
+	router.POST("/subs/summary", subs.Summary)
 
 	router.Server.Addr = subs.Config.HTTP.Host + ":" + subs.Config.HTTP.Port
 	router.Server.ReadTimeout = subs.Config.HTTP.ReadTimeout
