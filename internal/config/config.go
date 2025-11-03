@@ -2,48 +2,25 @@ package config
 
 import (
 	"fmt"
-	"io"
-	"os"
-	"time"
 
-	"gopkg.in/yaml.v3"
+	"github.com/go-playground/validator/v10"
+	"github.com/ilyakaznacheev/cleanenv"
 )
 
-func Default() *Config {
-	return &Config{
-		Logger: &Logger{
-			Level:  "info",
-			Format: "text",
-		},
-		Server: &Server{
-			Host: "localhost",
-			Port: "8080",
-			ShutdownTimeout: 30 * time.Second,
-		},
-	}
-}
+func Load(path string) (*Config, error) {
+	cfg := &Config{}
 
-func Parse(r io.Reader) (*Config, error) {
-	cfg := Default()
-	if err := yaml.NewDecoder(r).Decode(cfg); err != nil {
-		return nil, fmt.Errorf("unmarshaling: %w", err)
+	if err := cleanenv.ReadConfig(path, cfg); err != nil {
+		return nil, fmt.Errorf("parse yaml config fail: %w", err)
+	}
+
+	if err := cleanenv.ReadEnv(cfg); err != nil {
+		return nil, fmt.Errorf("get env variables fail: %w", err)
+	}
+
+	if err := validator.New().Struct(cfg); err != nil {
+		return nil, fmt.Errorf("invalid config: %w", err)
 	}
 
 	return cfg, nil
-}
-
-func ParseFile(path string) (*Config, error) {
-	file, err := os.Open(path)
-	if err != nil {
-		return nil, fmt.Errorf("open config file: %w", err)
-	}
-
-	defer file.Close()
-
-	res, err := Parse(file)
-	if err != nil {
-		return nil, err
-	}
-
-	return res, nil
 }
