@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/P3rCh1/subs-agregator/internal/models"
+	"github.com/P3rCh1/subs-aggregator/internal/models"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 )
@@ -52,17 +52,17 @@ func TestValidate(t *testing.T) {
 		},
 	}
 
-	for _, tc := range tests {
-		t.Run(tc.name, func(t *testing.T) {
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
 			sub := defaultSub()
-			tc.modifySub(&sub)
+			test.modifySub(&sub)
 
 			err := ValidateSub(&sub)
 
-			if tc.wantErr == nil {
+			if test.wantErr == nil {
 				assert.NoError(t, err)
 			} else {
-				assert.Equal(t, tc.wantErr, err)
+				assert.Equal(t, test.wantErr, err)
 			}
 		})
 	}

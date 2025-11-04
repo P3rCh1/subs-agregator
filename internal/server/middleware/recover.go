@@ -6,7 +6,7 @@ import (
 
 	"log/slog"
 
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
 func Recover(logger *slog.Logger) echo.MiddlewareFunc {

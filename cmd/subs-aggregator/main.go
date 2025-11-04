@@ -10,14 +10,20 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/P3rCh1/subs-agregator/internal/config"
-	"github.com/P3rCh1/subs-agregator/internal/logger"
-	"github.com/P3rCh1/subs-agregator/internal/server/handlers/subs"
-	mw "github.com/P3rCh1/subs-agregator/internal/server/middleware"
-	"github.com/P3rCh1/subs-agregator/internal/storage/postgres"
-	"github.com/labstack/echo"
+	_ "github.com/P3rCh1/subs-aggregator/docs"
+	"github.com/P3rCh1/subs-aggregator/internal/config"
+	"github.com/P3rCh1/subs-aggregator/internal/logger"
+	"github.com/P3rCh1/subs-aggregator/internal/server/handlers/subs"
+	"github.com/P3rCh1/subs-aggregator/internal/server/middleware"
+	"github.com/P3rCh1/subs-aggregator/internal/storage/postgres"
+	"github.com/labstack/echo/v4"
+	echoswagger "github.com/swaggo/echo-swagger"
 )
 
+// @title Subscriptions API
+// @version 1.0
+// @host localhost:8080
+// @BasePath /
 func main() {
 	var configPath string
 	flag.StringVar(&configPath, "c", "config.yaml", "config path")
@@ -90,8 +96,8 @@ func SetupServer(subs *subs.ServerAPI) *echo.Echo {
 	router.HideBanner = true
 	router.Logger.SetOutput(io.Discard)
 
-	router.Use(mw.Recover(subs.Logger))
-	router.Use(mw.Logger(subs.Logger))
+	router.Use(middleware.Recover(subs.Logger))
+	router.Use(middleware.Logger(subs.Logger))
 
 	router.POST("/subs", subs.Create)
 	router.GET("/subs/:id", subs.Read)
@@ -99,6 +105,7 @@ func SetupServer(subs *subs.ServerAPI) *echo.Echo {
 	router.DELETE("/subs/:id", subs.Delete)
 	router.GET("/subs/list/:id", subs.List)
 	router.POST("/subs/summary", subs.Summary)
+	router.GET("/swagger/*", echoswagger.WrapHandler)
 
 	router.Server.Addr = subs.Config.HTTP.Host + ":" + subs.Config.HTTP.Port
 	router.Server.ReadTimeout = subs.Config.HTTP.ReadTimeout

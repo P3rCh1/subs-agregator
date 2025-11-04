@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/P3rCh1/subs-agregator/internal/config"
-	"github.com/P3rCh1/subs-agregator/internal/models"
+	"github.com/P3rCh1/subs-aggregator/internal/config"
+	"github.com/P3rCh1/subs-aggregator/internal/models"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"

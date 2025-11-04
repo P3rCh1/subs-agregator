@@ -7,8 +7,8 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/P3rCh1/subs-agregator/internal/config"
-	"github.com/P3rCh1/subs-agregator/internal/logger"
+	"github.com/P3rCh1/subs-aggregator/internal/config"
+	"github.com/P3rCh1/subs-aggregator/internal/logger"
 	"github.com/golang-migrate/migrate"
 	_ "github.com/golang-migrate/migrate/database/postgres"
 	_ "github.com/golang-migrate/migrate/source/file"

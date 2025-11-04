@@ -15,6 +15,7 @@ FROM alpine:latest
 COPY --from=builder /app/subs-aggregator .
 COPY --from=builder /app/migrate ./
 COPY --from=builder /app/migrations ./migrations
+COPY --from=builder /app/docs ./docs
 COPY --from=builder /app/${CONFIG_PATH} ./
 
 EXPOSE 8080

@@ -4,7 +4,7 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
 func Logger(logger *slog.Logger) echo.MiddlewareFunc {

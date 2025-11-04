@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/P3rCh1/subs-agregator/internal/config"
+	"github.com/P3rCh1/subs-aggregator/internal/config"
 )
 
 var (

@@ -12,11 +12,11 @@ import (
 
 	"log/slog"
 
-	"github.com/P3rCh1/subs-agregator/internal/config"
-	"github.com/P3rCh1/subs-agregator/internal/models"
-	"github.com/P3rCh1/subs-agregator/internal/storage/postgres"
+	"github.com/P3rCh1/subs-aggregator/internal/config"
+	"github.com/P3rCh1/subs-aggregator/internal/models"
+	"github.com/P3rCh1/subs-aggregator/internal/storage/postgres"
 	"github.com/google/uuid"
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )

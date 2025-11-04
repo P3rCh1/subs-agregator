@@ -3,8 +3,8 @@ package subs
 import (
 	"net/http"
 
-	"github.com/P3rCh1/subs-agregator/internal/models"
-	"github.com/labstack/echo"
+	"github.com/P3rCh1/subs-aggregator/internal/models"
+	"github.com/labstack/echo/v4"
 )
 
 func ValidateSumRequest(sr *models.SumRequest) error {
@@ -19,6 +19,14 @@ func ValidateSumRequest(sr *models.SumRequest) error {
 	return nil
 }
 
+// @Summary Calculate total
+// @Tags subscriptions
+// @Accept json
+// @Produce json
+// @Param request body SummaryRequest true "Summary request parameters"
+// @Success 200 {object} SummaryResponse
+// @Failure 400 {object} ErrorResponse
+// @Router /subs/summary [post]
 func (s *ServerAPI) Summary(ctx echo.Context) error {
 	var r models.SumRequest
 	if err := ctx.Bind(&r); err != nil {

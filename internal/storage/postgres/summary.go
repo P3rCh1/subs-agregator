@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/P3rCh1/subs-agregator/internal/models"
+	"github.com/P3rCh1/subs-aggregator/internal/models"
 	"github.com/google/uuid"
 )
 

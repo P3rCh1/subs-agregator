@@ -4,9 +4,9 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/P3rCh1/subs-agregator/internal/config"
-	"github.com/P3rCh1/subs-agregator/internal/storage/postgres"
-	"github.com/labstack/echo"
+	"github.com/P3rCh1/subs-aggregator/internal/config"
+	"github.com/P3rCh1/subs-aggregator/internal/storage/postgres"
+	"github.com/labstack/echo/v4"
 )
 
 var (
