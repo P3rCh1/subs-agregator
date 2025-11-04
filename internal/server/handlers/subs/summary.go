@@ -19,13 +19,16 @@ func ValidateSumRequest(sr *models.SumRequest) error {
 	return nil
 }
 
-// @Summary Calculate total
+// @Summary Calculate total payments
+// @Description Calculates the total amount spent on subscriptions within a date range.
+// @Description Both start_date and end_date are required; user_id and service_name are optional filters.
 // @Tags subscriptions
 // @Accept json
 // @Produce json
-// @Param request body SummaryRequest true "Summary request parameters"
-// @Success 200 {object} SummaryResponse
-// @Failure 400 {object} ErrorResponse
+// @Param request body subs.SummaryRequest true "Summary request parameters"
+// @Success 200 {object} subs.SummaryResponse
+// @Failure 400 {object} subs.ErrorResponse
+// @Failure 500 {object} subs.ErrorResponse
 // @Router /subs/summary [post]
 func (s *ServerAPI) Summary(ctx echo.Context) error {
 	var r models.SumRequest

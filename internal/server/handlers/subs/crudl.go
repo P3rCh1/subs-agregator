@@ -35,13 +35,14 @@ func ValidateSub(sub *models.Subscription) error {
 }
 
 // @Summary Create subscription
+// @Description Creates a new subscription record for a user.
 // @Tags subscriptions
 // @Accept json
 // @Produce json
-// @Param subscription body CreateSubscriptionRequest true "Subscription data"
-// @Success 201 {object} SubscriptionResponse
-// @Failure 400 {object} ErrorResponse
-// @Failure 500 {object} ErrorResponse
+// @Param subscription body subs.CreateSubscriptionRequest true "Subscription data"
+// @Success 201 {object} subs.SubscriptionResponse
+// @Failure 400 {object} subs.ErrorResponse
+// @Failure 500 {object} subs.ErrorResponse
 // @Router /subs [post]
 func (s *ServerAPI) Create(ctx echo.Context) error {
 	var sub models.Subscription
@@ -66,12 +67,13 @@ func (s *ServerAPI) Create(ctx echo.Context) error {
 }
 
 // @Summary Get subscription
+// @Description Returns subscription details by its ID.
 // @Tags subscriptions
 // @Produce json
-// @Param id path string true "Subscription ID"
-// @Success 200 {object} SubscriptionResponse
-// @Failure 400 {object} ErrorResponse
-// @Failure 404 {object} ErrorResponse
+// @Param id path string true "Subscription ID (UUID)"
+// @Success 200 {object} subs.SubscriptionResponse
+// @Failure 400 {object} subs.ErrorResponse
+// @Failure 404 {object} subs.ErrorResponse
 // @Router /subs/{id} [get]
 func (s *ServerAPI) Read(ctx echo.Context) error {
 	id, err := uuid.Parse(ctx.Param("id"))
@@ -97,14 +99,16 @@ func (s *ServerAPI) Read(ctx echo.Context) error {
 }
 
 // @Summary Update subscription
+// @Description Updates an existing subscription by its ID.
 // @Tags subscriptions
 // @Accept json
 // @Produce json
-// @Param id path string true "Subscription ID"
-// @Param subscription body UpdateSubscriptionRequest true "Updated subscription data"
-// @Success 200 {object} SubscriptionResponse
-// @Failure 400 {object} ErrorResponse
-// @Failure 404 {object} ErrorResponse
+// @Param id path string true "Subscription ID (UUID)"
+// @Param subscription body subs.UpdateSubscriptionRequest true "Updated subscription data"
+// @Success 200 {object} subs.SubscriptionResponse
+// @Failure 400 {object} subs.ErrorResponse
+// @Failure 404 {object} subs.ErrorResponse
+// @Failure 500 {object} subs.ErrorResponse
 // @Router /subs/{id} [put]
 func (s *ServerAPI) Update(ctx echo.Context) error {
 	id, err := uuid.Parse(ctx.Param("id"))
@@ -136,13 +140,16 @@ func (s *ServerAPI) Update(ctx echo.Context) error {
 	return nil
 }
 
-// @Summary List subscriptions
+// @Summary Delete subscription
+// @Description Deletes a subscription by its ID.
 // @Tags subscriptions
 // @Produce json
-// @Param id path string true "User ID"
-// @Success 200 {array} SubscriptionResponse
-// @Failure 400 {object} ErrorResponse
-// @Router /subs/list/{id} [get]
+// @Param id path string true "Subscription ID (UUID)"
+// @Success 200 "Subscription successfully deleted"
+// @Failure 400 {object} subs.ErrorResponse
+// @Failure 404 {object} subs.ErrorResponse
+// @Failure 500 {object} subs.ErrorResponse
+// @Router /subs/{id} [delete]
 func (s *ServerAPI) Delete(ctx echo.Context) error {
 	id, err := uuid.Parse(ctx.Param("id"))
 	if err != nil {
@@ -166,12 +173,14 @@ func (s *ServerAPI) Delete(ctx echo.Context) error {
 	return nil
 }
 
-// @Summary List subscriptions
+// @Summary List user subscriptions
+// @Description Returns all subscriptions for a specific user.
 // @Tags subscriptions
 // @Produce json
-// @Param id path string true "User ID"
-// @Success 200 {array} models.Subscription
-// @Failure 400 {object} map[string]string
+// @Param id path string true "User ID (UUID)"
+// @Success 200 {array} subs.SubscriptionResponse
+// @Failure 400 {object} subs.ErrorResponse
+// @Failure 500 {object} subs.ErrorResponse
 // @Router /subs/list/{id} [get]
 func (s *ServerAPI) List(ctx echo.Context) error {
 	id, err := uuid.Parse(ctx.Param("id"))

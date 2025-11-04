@@ -17,6 +17,7 @@ const docTemplate = `{
     "paths": {
         "/subs": {
             "post": {
+                "description": "Creates a new subscription record for a user.",
                 "consumes": [
                     "application/json"
                 ],
@@ -62,17 +63,18 @@ const docTemplate = `{
         },
         "/subs/list/{id}": {
             "get": {
+                "description": "Returns all subscriptions for a specific user.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "subscriptions"
                 ],
-                "summary": "List subscriptions",
+                "summary": "List user subscriptions",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "User ID",
+                        "description": "User ID (UUID)",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -84,17 +86,20 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Subscription"
+                                "$ref": "#/definitions/subs.SubscriptionResponse"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/subs.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/subs.ErrorResponse"
                         }
                     }
                 }
@@ -102,6 +107,7 @@ const docTemplate = `{
         },
         "/subs/summary": {
             "post": {
+                "description": "Calculates the total amount spent on subscriptions within a date range.\nBoth start_date and end_date are required; user_id and service_name are optional filters.",
                 "consumes": [
                     "application/json"
                 ],
@@ -111,7 +117,7 @@ const docTemplate = `{
                 "tags": [
                     "subscriptions"
                 ],
-                "summary": "Calculate total",
+                "summary": "Calculate total payments",
                 "parameters": [
                     {
                         "description": "Summary request parameters",
@@ -135,12 +141,19 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/subs.ErrorResponse"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/subs.ErrorResponse"
+                        }
                     }
                 }
             }
         },
         "/subs/{id}": {
             "get": {
+                "description": "Returns subscription details by its ID.",
                 "produces": [
                     "application/json"
                 ],
@@ -151,7 +164,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Subscription ID",
+                        "description": "Subscription ID (UUID)",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -179,6 +192,7 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "description": "Updates an existing subscription by its ID.",
                 "consumes": [
                     "application/json"
                 ],
@@ -192,7 +206,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Subscription ID",
+                        "description": "Subscription ID (UUID)",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -225,46 +239,60 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/subs.ErrorResponse"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/subs.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes a subscription by its ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "subscriptions"
+                ],
+                "summary": "Delete subscription",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Subscription ID (UUID)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Subscription successfully deleted"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/subs.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/subs.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/subs.ErrorResponse"
+                        }
                     }
                 }
             }
         }
     },
     "definitions": {
-        "models.MonthDate": {
-            "type": "object",
-            "properties": {
-                "time": {
-                    "type": "string"
-                },
-                "valid": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "models.Subscription": {
-            "type": "object",
-            "properties": {
-                "end_date": {
-                    "$ref": "#/definitions/models.MonthDate"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "price": {
-                    "type": "integer"
-                },
-                "service_name": {
-                    "type": "string"
-                },
-                "start_date": {
-                    "$ref": "#/definitions/models.MonthDate"
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
         "subs.CreateSubscriptionRequest": {
             "type": "object",
             "properties": {

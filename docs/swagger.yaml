@@ -1,27 +1,5 @@
 basePath: /
 definitions:
-  models.MonthDate:
-    properties:
-      time:
-        type: string
-      valid:
-        type: boolean
-    type: object
-  models.Subscription:
-    properties:
-      end_date:
-        $ref: '#/definitions/models.MonthDate'
-      id:
-        type: string
-      price:
-        type: integer
-      service_name:
-        type: string
-      start_date:
-        $ref: '#/definitions/models.MonthDate'
-      user_id:
-        type: string
-    type: object
   subs.CreateSubscriptionRequest:
     properties:
       end_date:
@@ -116,6 +94,7 @@ paths:
     post:
       consumes:
       - application/json
+      description: Creates a new subscription record for a user.
       parameters:
       - description: Subscription data
         in: body
@@ -142,9 +121,38 @@ paths:
       tags:
       - subscriptions
   /subs/{id}:
-    get:
+    delete:
+      description: Deletes a subscription by its ID.
       parameters:
-      - description: Subscription ID
+      - description: Subscription ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Subscription successfully deleted
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/subs.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/subs.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/subs.ErrorResponse'
+      summary: Delete subscription
+      tags:
+      - subscriptions
+    get:
+      description: Returns subscription details by its ID.
+      parameters:
+      - description: Subscription ID (UUID)
         in: path
         name: id
         required: true
@@ -170,8 +178,9 @@ paths:
     put:
       consumes:
       - application/json
+      description: Updates an existing subscription by its ID.
       parameters:
-      - description: Subscription ID
+      - description: Subscription ID (UUID)
         in: path
         name: id
         required: true
@@ -197,13 +206,18 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/subs.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/subs.ErrorResponse'
       summary: Update subscription
       tags:
       - subscriptions
   /subs/list/{id}:
     get:
+      description: Returns all subscriptions for a specific user.
       parameters:
-      - description: User ID
+      - description: User ID (UUID)
         in: path
         name: id
         required: true
@@ -215,21 +229,26 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.Subscription'
+              $ref: '#/definitions/subs.SubscriptionResponse'
             type: array
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: List subscriptions
+            $ref: '#/definitions/subs.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/subs.ErrorResponse'
+      summary: List user subscriptions
       tags:
       - subscriptions
   /subs/summary:
     post:
       consumes:
       - application/json
+      description: |-
+        Calculates the total amount spent on subscriptions within a date range.
+        Both start_date and end_date are required; user_id and service_name are optional filters.
       parameters:
       - description: Summary request parameters
         in: body
@@ -248,7 +267,11 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/subs.ErrorResponse'
-      summary: Calculate total
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/subs.ErrorResponse'
+      summary: Calculate total payments
       tags:
       - subscriptions
 swagger: "2.0"
