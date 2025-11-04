@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	ErrInternal            = echo.NewHTTPError(http.StatusBadRequest, "internal server error")
+	ErrInternal            = echo.NewHTTPError(http.StatusInternalServerError, "internal server error")
 	ErrBadRequest          = echo.NewHTTPError(http.StatusBadRequest, "bad request")
 	ErrNegativePrice       = echo.NewHTTPError(http.StatusBadRequest, "negative price")
 	ErrStartDateRequired   = echo.NewHTTPError(http.StatusBadRequest, "start_date is required")
@@ -19,16 +19,16 @@ var (
 	ErrServiceNameRequired = echo.NewHTTPError(http.StatusBadRequest, "service_name is required")
 	ErrUserIDRequired      = echo.NewHTTPError(http.StatusBadRequest, "user_id is required")
 	ErrInvalidID           = echo.NewHTTPError(http.StatusBadRequest, "invalid id")
-	ErrSubNotFound         = echo.NewHTTPError(http.StatusBadRequest, "subscription not found")
+	ErrSubNotFound         = echo.NewHTTPError(http.StatusNotFound, "subscription not found")
 )
 
 type ServerAPI struct {
 	Logger *slog.Logger
 	Config *config.Config
-	DB     *postgres.SubsAPI
+	DB     postgres.SubsAPI
 }
 
-func NewServerAPI(logger *slog.Logger, config *config.Config, db *postgres.SubsAPI) *ServerAPI {
+func NewServerAPI(logger *slog.Logger, config *config.Config, db postgres.SubsAPI) *ServerAPI {
 	return &ServerAPI{
 		Logger: logger,
 		Config: config,

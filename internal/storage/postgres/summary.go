@@ -15,7 +15,7 @@ type sumData struct {
 	EndDate   models.MonthDate `db:"end_date"`
 }
 
-func (s *SubsAPI) Summary(ctx context.Context, req *models.SumRequest) (int, error) {
+func (s *subsDB) Summary(ctx context.Context, req *models.SumRequest) (int, error) {
 	conds := []string{
 		"start_date <= $2",
 		"(end_date IS NULL OR end_date >= $1)",

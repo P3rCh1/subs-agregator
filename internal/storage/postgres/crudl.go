@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"io"
 
 	"github.com/P3rCh1/subs-agregator/internal/config"
 	"github.com/P3rCh1/subs-agregator/internal/models"
@@ -15,11 +16,21 @@ import (
 
 var ErrNotFound = errors.New("not found")
 
-type SubsAPI struct {
+type SubsAPI interface {
+	io.Closer
+	Create(ctx context.Context, sub *models.Subscription) error
+	Read(ctx context.Context, id uuid.UUID) (*models.Subscription, error)
+	Update(ctx context.Context, sub *models.Subscription) error
+	Delete(ctx context.Context, id uuid.UUID) error
+	List(ctx context.Context, userID uuid.UUID) ([]models.Subscription, error)
+	Summary(ctx context.Context, req *models.SumRequest) (int, error)
+}
+
+type subsDB struct {
 	db *sqlx.DB
 }
 
-func NewSubsAPI(cfg *config.Postgres) (*SubsAPI, error) {
+func NewSubsAPI(cfg *config.Postgres) (SubsAPI, error) {
 	info := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 		cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.DB, cfg.SSLMode,
@@ -35,14 +46,14 @@ func NewSubsAPI(cfg *config.Postgres) (*SubsAPI, error) {
 		return nil, fmt.Errorf("ping postgres fail: %w", err)
 	}
 
-	return &SubsAPI{db}, nil
+	return &subsDB{db}, nil
 }
 
-func (s *SubsAPI) Close() error {
+func (s *subsDB) Close() error {
 	return s.db.Close()
 }
 
-func (s *SubsAPI) Create(ctx context.Context, sub *models.Subscription) error {
+func (s *subsDB) Create(ctx context.Context, sub *models.Subscription) error {
 	const query = `
 		INSERT INTO subscriptions (service_name, price, user_id, start_date, end_date)
 		VALUES ($1, $2, $3, $4, $5)
@@ -60,7 +71,7 @@ func (s *SubsAPI) Create(ctx context.Context, sub *models.Subscription) error {
 	return nil
 }
 
-func (s *SubsAPI) Read(ctx context.Context, id uuid.UUID) (*models.Subscription, error) {
+func (s *subsDB) Read(ctx context.Context, id uuid.UUID) (*models.Subscription, error) {
 	const query = `
 		SELECT * FROM subscriptions
 		WHERE id = $1
@@ -78,7 +89,7 @@ func (s *SubsAPI) Read(ctx context.Context, id uuid.UUID) (*models.Subscription,
 	return &sub, nil
 }
 
-func (s *SubsAPI) Update(ctx context.Context, sub *models.Subscription) error {
+func (s *subsDB) Update(ctx context.Context, sub *models.Subscription) error {
 	const query = `
 		UPDATE subscriptions
 		SET service_name = $1, price = $2, user_id = $3, start_date = $4, end_date = $5
@@ -107,7 +118,7 @@ func (s *SubsAPI) Update(ctx context.Context, sub *models.Subscription) error {
 	return nil
 }
 
-func (s *SubsAPI) Delete(ctx context.Context, id uuid.UUID) error {
+func (s *subsDB) Delete(ctx context.Context, id uuid.UUID) error {
 	const query = `
 		DELETE FROM subscriptions WHERE id = $1
 	`
@@ -130,7 +141,7 @@ func (s *SubsAPI) Delete(ctx context.Context, id uuid.UUID) error {
 	return nil
 }
 
-func (s *SubsAPI) List(ctx context.Context, userID uuid.UUID) ([]models.Subscription, error) {
+func (s *subsDB) List(ctx context.Context, userID uuid.UUID) ([]models.Subscription, error) {
 	const query = `
 		SELECT * FROM subscriptions
 		WHERE user_id = $1
