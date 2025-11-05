@@ -6,11 +6,6 @@ type Config struct {
 	Logger   Logger   `yaml:"logger"`
 	HTTP     HTTP     `yaml:"server"`
 	Postgres Postgres `yaml:"postgres"`
-	App      App      `yaml:"app"`
-}
-
-type App struct {
-	Env string `yaml:"env" env:"ENV" env-default:"prod"`
 }
 
 type Logger struct {
