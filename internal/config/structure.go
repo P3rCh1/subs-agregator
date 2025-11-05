@@ -27,6 +27,6 @@ type Postgres struct {
 	Port     string `yaml:"port"     env:"POSTGRES_PORT"     env-default:"5432"`
 	User     string `                env:"POSTGRES_USER"     validate:"required"`
 	Password string `                env:"POSTGRES_PASSWORD" validate:"required"`
-	DB       string `                env:"POSTGRES_DB"       env-default:"subscriptions"`
+	DB       string `                env:"POSTGRES_DB"       validate:"required"`
 	SSLMode  string `yaml:"ssl_mode" env:"POSTGRES_SSL_MODE" env-default:"disable"`
 }
